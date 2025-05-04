@@ -18,6 +18,10 @@ check_button = InlineKeyboardMarkup(
         [InlineKeyboardButton(text="✅ Проверить подписку", callback_data="check_sub")]
     ]
 )
+@dp.message(F.document)
+async def get_file_id(message: Message):
+    file_id = message.document.file_id
+    await message.answer(f"📎 file_id: <code>{file_id}</code>")
 
 # 📩 /start
 @dp.message(F.text == "/start")
