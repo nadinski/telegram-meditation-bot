@@ -54,7 +54,7 @@ async def check_subscription(callback: CallbackQuery):
         member = await bot.get_chat_member(chat_id=f"@{CHANNEL_USERNAME}", user_id=user_id)
         if member.status in ("member", "administrator", "creator"):
             await callback.message.answer("🎉 Спасибо за подписку! Вот твоя медитация:")
-            await callback.message.answer_document("ТУТ_ТВОЙ_file_id")
+            await callback.message.answer_document("CQACAgIAAxkBAAMeaBcf2YDdLQHYrvrCq_kV56zy1UUAArtwAAKY8cBIl96ssS0AAXEuNgQ")
         else:
             await callback.message.answer("😔 Пожалуйста, подпишись на канал сначала.")
     except TelegramBadRequest:
