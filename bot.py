@@ -39,9 +39,9 @@ async def get_audio_file_id(message: Message):
 async def cmd_start(message: Message):
     text = (
         "Привет! ✨\n\n"
-        "Чтобы получить медитацию, пожалуйста, подпишись на канал:\n"
+        "Чтобы получить медитацию, пожалуйста, подпишитесь на канал:\n"
         f"👉 <a href='https://t.me/{CHANNEL_USERNAME}'>@{CHANNEL_USERNAME}</a>\n\n"
-        "После этого нажми кнопку ниже:"
+        "После этого нажмите кнопку ниже:"
     )
     await message.answer(text, reply_markup=check_button)
 
@@ -53,12 +53,12 @@ async def check_subscription(callback: CallbackQuery):
     try:
         member = await bot.get_chat_member(chat_id=f"@{CHANNEL_USERNAME}", user_id=user_id)
         if member.status in ("member", "administrator", "creator"):
-            await callback.message.answer("🎉 Спасибо за подписку! Вот твоя медитация:")
+            await callback.message.answer("🎉 Спасибо за подписку! Вот ваша медитация:")
             await callback.message.answer_document("CQACAgIAAxkBAAMeaBcf2YDdLQHYrvrCq_kV56zy1UUAArtwAAKY8cBIl96ssS0AAXEuNgQ")
         else:
-            await callback.message.answer("😔 Пожалуйста, подпишись на канал сначала.")
+            await callback.message.answer("😔 Пожалуйста, подпишитесь на канал сначала.")
     except TelegramBadRequest:
-        await callback.message.answer("⚠️ Не удалось проверить подписку. Попробуй позже.")
+        await callback.message.answer("⚠️ Не удалось проверить подписку. Попробуйте позже.")
 
 # 🏁 Запуск
 async def main():
