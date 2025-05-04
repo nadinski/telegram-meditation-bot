@@ -1,30 +1,32 @@
 import asyncio
 import logging
-from aiogram import Bot, Dispatcher, F
-from aiogram.types import Message, CallbackQuery
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram import Bot, Dispatcher, F, Router
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.enums import ParseMode
 
 API_TOKEN = '7900733074:AAFIhX9-YQz-Hvtec0j6CaU3mcIc4PKEpzQ'
-CHANNEL_USERNAME = 'svetvmashine'  # без https://t.me/
+CHANNEL_USERNAME = 'svetvmashine'
 
 bot = Bot(token=API_TOKEN, parse_mode=ParseMode.HTML)
+router = Router()
 dp = Dispatcher()
+dp.include_router(router)
 
-# 👇 Кнопка для проверки подписки
 check_button = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text="✅ Проверить подписку", callback_data="check_sub")]
     ]
 )
-@dp.message(F.document)
+
+# 📎 Получение file_id
+@router.message(F.document)
 async def get_file_id(message: Message):
     file_id = message.document.file_id
     await message.answer(f"📎 file_id: <code>{file_id}</code>")
 
 # 📩 /start
-@dp.message(F.text == "/start")
+@router.message(F.text == "/start")
 async def cmd_start(message: Message):
     text = (
         "Привет! ✨\n\n"
@@ -35,7 +37,7 @@ async def cmd_start(message: Message):
     await message.answer(text, reply_markup=check_button)
 
 # 🔍 Проверка подписки
-@dp.callback_query(F.data == "check_sub")
+@router.callback_query(F.data == "check_sub")
 async def check_subscription(callback: CallbackQuery):
     user_id = callback.from_user.id
 
@@ -43,13 +45,13 @@ async def check_subscription(callback: CallbackQuery):
         member = await bot.get_chat_member(chat_id=f"@{CHANNEL_USERNAME}", user_id=user_id)
         if member.status in ("member", "administrator", "creator"):
             await callback.message.answer("🎉 Спасибо за подписку! Вот твоя медитация:")
-            await callback.message.answer_document(open("meditation.mp3", "rb"))
+            await callback.message.answer_document("ТУТ_ТВОЙ_file_id")
         else:
             await callback.message.answer("😔 Пожалуйста, подпишись на канал сначала.")
     except TelegramBadRequest:
         await callback.message.answer("⚠️ Не удалось проверить подписку. Попробуй позже.")
 
-# 🏁 Запуск бота
+# 🏁 Запуск
 async def main():
     logging.basicConfig(level=logging.INFO)
     await dp.start_polling(bot)
