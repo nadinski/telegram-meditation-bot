@@ -24,6 +24,15 @@ check_button = InlineKeyboardMarkup(
 async def get_file_id(message: Message):
     file_id = message.document.file_id
     await message.answer(f"📎 file_id: <code>{file_id}</code>")
+@router.message(F.document)
+async def get_file_id(message: Message):
+    file_id = message.document.file_id
+    await message.answer(f"📎 document file_id: <code>{file_id}</code>")
+
+@router.message(F.audio)
+async def get_audio_file_id(message: Message):
+    file_id = message.audio.file_id
+    await message.answer(f"🎵 audio file_id: <code>{file_id}</code>")
 
 # 📩 /start
 @router.message(F.text == "/start")
