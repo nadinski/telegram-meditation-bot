@@ -5,7 +5,7 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKe
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.enums import ParseMode
 
-API_TOKEN = '7900733074:AAFIhX9-YQz-Hvtec0j6CaU3mcIc4PKEpzQ'
+API_TOKEN = '7900733074:AAGvNGqkx00styCTJYqvJRV5B9Kiw5XLPJQ'
 CHANNEL_USERNAME = 'svetvmashine'
 
 bot = Bot(token=API_TOKEN, parse_mode=ParseMode.HTML)
