@@ -1,17 +1,16 @@
 import asyncio
 import logging
-from aiogram import Bot, Dispatcher, F, Router
+from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.enums import ParseMode
+from aiogram.filters import Command
 
-API_TOKEN = '7900733074:AAHe06fcSukREMlysbbHnw2bHxzQv7Vyjmw'
+API_TOKEN = 'ВАШ_НОВЫЙ_ТОКЕН'
 CHANNEL_USERNAME = 'svetvmashine'
 
 bot = Bot(token=API_TOKEN, parse_mode=ParseMode.HTML)
-router = Router()
 dp = Dispatcher()
-dp.include_router(router)
 
 check_button = InlineKeyboardMarkup(
     inline_keyboard=[
@@ -19,23 +18,8 @@ check_button = InlineKeyboardMarkup(
     ]
 )
 
-# 📎 Получение file_id
-@router.message(F.document)
-async def get_file_id(message: Message):
-    file_id = message.document.file_id
-    await message.answer(f"📎 file_id: <code>{file_id}</code>")
-@router.message(F.document)
-async def get_file_id(message: Message):
-    file_id = message.document.file_id
-    await message.answer(f"📎 document file_id: <code>{file_id}</code>")
-
-@router.message(F.audio)
-async def get_audio_file_id(message: Message):
-    file_id = message.audio.file_id
-    await message.answer(f"🎵 audio file_id: <code>{file_id}</code>")
-
-# 📩 /start
-@router.message(F.text == "/start")
+# 📩 /start команда
+@dp.message(Command("start"))
 async def cmd_start(message: Message):
     text = (
         "Привет! ✨\n\n"
@@ -46,7 +30,7 @@ async def cmd_start(message: Message):
     await message.answer(text, reply_markup=check_button)
 
 # 🔍 Проверка подписки
-@router.callback_query(F.data == "check_sub")
+@dp.callback_query(F.data == "check_sub")
 async def check_subscription(callback: CallbackQuery):
     user_id = callback.from_user.id
 
@@ -57,7 +41,8 @@ async def check_subscription(callback: CallbackQuery):
             await callback.message.answer_document("CQACAgIAAxkBAAMeaBcf2YDdLQHYrvrCq_kV56zy1UUAArtwAAKY8cBIl96ssS0AAXEuNgQ")
         else:
             await callback.message.answer("😔 Пожалуйста, подпишитесь на канал сначала.")
-    except TelegramBadRequest:
+    except TelegramBadRequest as e:
+        logging.error(f"Ошибка проверки подписки: {e}")
         await callback.message.answer("⚠️ Не удалось проверить подписку. Попробуйте позже.")
 
 # 🏁 Запуск
