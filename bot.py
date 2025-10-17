@@ -6,7 +6,7 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
 
-API_TOKEN = 'ВАШ_НОВЫЙ_ТОКЕН'
+API_TOKEN = '7900733074:AAHe06fcSukREMlysbbHnw2bHxzQv7Vyjmw'
 CHANNEL_USERNAME = 'svetvmashine'
 
 bot = Bot(token=API_TOKEN, parse_mode=ParseMode.HTML)
