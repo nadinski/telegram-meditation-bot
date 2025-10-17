@@ -9,7 +9,8 @@ from aiogram.filters import Command
 API_TOKEN = '7900733074:AAHe06fcSukREMlysbbHnw2bHxzQv7Vyjmw'
 CHANNEL_USERNAME = 'svetvmashine'
 
-bot = Bot(token=API_TOKEN, parse_mode=ParseMode.HTML)
+from aiogram.client.default import DefaultBotProperties
+bot = Bot(token=API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
 
 check_button = InlineKeyboardMarkup(
