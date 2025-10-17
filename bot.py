@@ -1,14 +1,15 @@
-import asyncio
+ import asyncio
 import logging
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.enums import ParseMode
+from aiogram.client.default import DefaultBotProperties
 
 API_TOKEN = '7900733074:AAHe06fcSukREMlysbbHnw2bHxzQv7Vyjmw'  # Используйте переменную окружения на Railway!
 CHANNEL_USERNAME = 'svetvmashine'
 
-bot = Bot(token=API_TOKEN, parse_mode=ParseMode.HTML)
+bot = Bot(token=API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 router = Router()
 dp = Dispatcher()
 dp.include_router(router)
