@@ -1,15 +1,18 @@
-import asyncio
 import logging
 from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
+from aiogram.client.default import DefaultBotProperties
+from aiogram.webhook.aiohttp_server import SimpleRequestHandler, setup_application
+from aiohttp import web
 
 API_TOKEN = '7900733074:AAHe06fcSukREMlysbbHnw2bHxzQv7Vyjmw'
 CHANNEL_USERNAME = 'svetvmashine'
+WEBHOOK_PATH = "/webhook"
+WEBHOOK_URL = "https://nadinski.pythonanywhere.com" + WEBHOOK_PATH  # ЗАМЕНИТЕ ВАШ_USERNAME
 
-from aiogram.client.default import DefaultBotProperties
 bot = Bot(token=API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
 
@@ -19,7 +22,6 @@ check_button = InlineKeyboardMarkup(
     ]
 )
 
-# 📩 /start команда
 @dp.message(Command("start"))
 async def cmd_start(message: Message):
     text = (
@@ -30,11 +32,9 @@ async def cmd_start(message: Message):
     )
     await message.answer(text, reply_markup=check_button)
 
-# 🔍 Проверка подписки
 @dp.callback_query(F.data == "check_sub")
 async def check_subscription(callback: CallbackQuery):
     user_id = callback.from_user.id
-
     try:
         member = await bot.get_chat_member(chat_id=f"@{CHANNEL_USERNAME}", user_id=user_id)
         if member.status in ("member", "administrator", "creator"):
@@ -46,10 +46,24 @@ async def check_subscription(callback: CallbackQuery):
         logging.error(f"Ошибка проверки подписки: {e}")
         await callback.message.answer("⚠️ Не удалось проверить подписку. Попробуйте позже.")
 
-# 🏁 Запуск
-async def main():
-    logging.basicConfig(level=logging.INFO)
-    await dp.start_polling(bot)
+async def on_startup(bot: Bot):
+    await bot.set_webhook(WEBHOOK_URL)
+
+def main():
+    app = web.Application()
+    webhook_requests_handler = SimpleRequestHandler(
+        dispatcher=dp,
+        bot=bot,
+    )
+    webhook_requests_handler.register(app, path=WEBHOOK_PATH)
+    setup_application(app, dp, bot=bot)
+    
+    # Запускаем webhook при старте
+    dp.startup.register(on_startup)
+    
+    return app
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    logging.basicConfig(level=logging.INFO)
+    app = main()
+    web.run_app(app, host="0.0.0.0", port=3000)
