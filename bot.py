@@ -28,14 +28,18 @@ router = Router()
 dp = Dispatcher()
 dp.include_router(router)
 
-# Клавиатура главного меню
-main_menu = InlineKeyboardMarkup(
-    inline_keyboard=[
+def get_main_menu(user_id):
+    """Возвращает главное меню с кнопкой статистики только для админа"""
+    buttons = [
         [InlineKeyboardButton(text="🧮 Калькулятор бюджета", callback_data="calculator")],
-        [InlineKeyboardButton(text="🧘 Получить медитацию", callback_data="meditation")],
-        [InlineKeyboardButton(text="📊 Статистика бота", callback_data="stats")]  # Только для админа
+        [InlineKeyboardButton(text="🧘 Получить медитацию", callback_data="meditation")]
     ]
-)
+    
+    # Добавляем кнопку статистики только для администратора
+    if user_id == ADMIN_ID:
+        buttons.append([InlineKeyboardButton(text="📊 Статистика бота", callback_data="stats")])
+    
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 # Клавиатура проверки подписки
 check_subscription_kb = InlineKeyboardMarkup(
@@ -70,7 +74,7 @@ async def cmd_start(message: Message):
         "Выберите нужный вариант:"
     )
     
-    await message.answer(welcome_text, reply_markup=main_menu)
+    await message.answer(welcome_text, reply_markup=get_main_menu(user_id))
 
 @router.callback_query(F.data == "calculator")
 async def start_calculator(callback: CallbackQuery):
@@ -171,7 +175,7 @@ async def show_stats(callback: CallbackQuery):
         f"🕐 <b>Последнее обновление:</b> {now.strftime('%d.%m.%Y %H:%M')}"
     )
     
-    await callback.message.edit_text(stats_text, reply_markup=main_menu)
+    await callback.message.edit_text(stats_text, reply_markup=get_main_menu(user_id))
 
 @router.message(Command("stats"))
 async def cmd_stats(message: Message):
